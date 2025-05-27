@@ -1,0 +1,46 @@
+﻿@model AuthenticatorViewModel
+
+<h1>Authenticator App</h1>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Your Authenticator Code</h5>
+        <p class="display-4">@Model.CurrentCode</p>
+        <p>Valid for: <span id="remainingSeconds">@Model.RemainingSeconds</span> seconds</p>
+        <p class="text-muted">Secret Key: @Model.SecretKey</p>
+    </div>
+</div>
+
+<hr />
+
+<h3>Verify Code</h3>
+<form asp-action="Verify" method="post">
+    <div class="form-group">
+        <label for="InputCode">Enter Code</label>
+        <input type="text" class="form-control" id="InputCode" name="InputCode" required/>
+    </div>
+    <button type="submit" class="btn btn-primary">Verify</button>
+</form>
+
+@if (Model.IsValid.HasValue && Model.IsAlertVisible)
+{
+    <div class="mt-3">
+        @if (Model.IsValid.Value)
+        {
+            <div class="alert alert-success">Code is valid!</div>
+        }
+        else
+        {
+            <div class="alert alert-danger">Invalid code!</div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Auto-refresh the page when the code expires
+        setTimeout(function() {
+            window.location.reload();
+        }, @Model.RemainingSeconds * 1000);
+    </script>
+}
